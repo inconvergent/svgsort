@@ -3,7 +3,7 @@
 from os import getcwd
 from os.path import sep
 
-from svgpathtools import svg2paths
+from svgpathtools import svg2paths2
 from svgpathtools import wsvg
 
 from numpy import array
@@ -103,7 +103,7 @@ class Svgsort():
     self.attributes = None
 
   def load(self, fn):
-    paths, attributes = svg2paths(self.cwd + sep + fn)
+    paths, attributes, vals = svg2paths2(self.cwd + sep + fn)
     self.paths = paths
     self.attributes = attributes
 

@@ -17,7 +17,11 @@ Examples:
 
 __ALL__ = ['Svgsort']
 
+import sys
+import traceback
+
 from svgsort.svgsort import Svgsort
+
 
 
 
@@ -30,9 +34,6 @@ def run():
 
 def main(args):
 
-  from sys import stderr
-
-  print(args)
 
   try:
 
@@ -41,10 +42,9 @@ def main(args):
     Svgsort().load(fn).sort().save(res)
     print('wrote: ', res)
 
-  except Exception as e:
-    print(e, file=stderr)
+  except Exception:
+    traceback.print_exc(file=sys.stdout)
     exit(1)
-
 
 if __name__ == '__main__':
   run()
