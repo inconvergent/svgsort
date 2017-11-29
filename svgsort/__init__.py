@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""fn
+"""svgsort
 
 Usage:
   fn <in> <out>
@@ -9,13 +9,13 @@ Usage:
 
 Examples:
 
-  fn input.svg             Process this file
+  fn input.svg out.svg     Process input.svg and write to out.svg
   -h                       Show this screen.
   --version                Show version.
 """
 
 
-__ALL__ = ['Fn']
+__ALL__ = ['Svgsort']
 
 from svgsort.svgsort import Svgsort
 
@@ -24,7 +24,7 @@ from svgsort.svgsort import Svgsort
 def run():
 
   from docopt import docopt
-  args = docopt(__doc__, version='svgsort 0.1.1')
+  args = docopt(__doc__, version='svgsort 0.0.1')
   main(args)
 
 
@@ -38,15 +38,11 @@ def main(args):
 
     fn = args['<in>']
     res = args['<out>']
-    s = Svgsort().load(fn).sort().save(res)
-    # s = Svgsort().load(fn).save(res)
-
+    Svgsort().load(fn).sort().save(res)
     print('wrote: ', res)
 
   except Exception as e:
     print(e, file=stderr)
-    # from traceback import print_exc
-    # print_exc(file=stderr)
     exit(1)
 
 
