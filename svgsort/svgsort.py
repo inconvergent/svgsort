@@ -34,7 +34,7 @@ def spatial_sort(paths, init_rad=0.01):
   tree = kdt(xs)
 
   count = 0
-  pos = array([1000, 0], 'float')
+  pos = array([0, 0], 'float')
 
   order = []
 
