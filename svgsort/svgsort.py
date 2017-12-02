@@ -19,13 +19,14 @@ class Svgsort():
     self.attributes = None
     self.initial_length = -1
 
-  def load(self, fn):
+  def load(self, fn, verbose=False):
     paths, attributes, vals = svg2paths2(self.cwd + sep + fn)
     self.paths = paths
     self.attributes = attributes
 
     self.initial_length = get_length(paths)
-    print('initial length: {:0.1f}'.format(self.initial_length))
+    if verbose:
+      print('initial length: {:0.1f}'.format(self.initial_length))
 
     return self
 
@@ -33,17 +34,16 @@ class Svgsort():
     wsvg(self.paths, attributes=self.attributes, filename=fn)
     return self
 
-  def sort(self, reverse=False):
+  def sort(self, reverse=False, verbose=False):
 
     order, flip = get_sort_order(self.paths, reverse)
-
     self.paths = list(reorder(self.paths, order, flip=flip))
     self.attributes = list(reorder(self.attributes, order))
 
-    length = get_length(self.paths)
-
-    print('sorted length: {:0.1f}'.format(length))
-    print('improvement: {:0.1f}'.format(length/self.initial_length))
+    if verbose:
+      length = get_length(self.paths)
+      print('sorted length: {:0.1f}'.format(length))
+      print('improvement: {:0.1f}'.format(length/self.initial_length))
 
     return self
 

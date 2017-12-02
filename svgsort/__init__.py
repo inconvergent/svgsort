@@ -26,6 +26,8 @@ import traceback
 from svgsort.svgsort import Svgsort
 
 
+VERBOSE = True
+
 
 
 def run():
@@ -40,12 +42,19 @@ def main(args):
   try:
     _in = args['<in>']
     out = args['<out>']
-    Svgsort().load(_in).sort(args['--reverse']).save(out)
-    print('wrote: ', out)
+    reverse = args['--reverse']
+    if VERBOSE:
+      print('reverse: {:b}'.format(reverse))
 
+    Svgsort().load(_in, verbose=VERBOSE)\
+             .sort(reverse, verbose=VERBOSE)\
+             .save(out)
+    print('wrote: ', out)
   except Exception:
     traceback.print_exc(file=sys.stdout)
     exit(1)
+
+
 
 if __name__ == '__main__':
   run()
