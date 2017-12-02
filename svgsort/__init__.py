@@ -11,10 +11,8 @@ Options:
   --reverse                     Attempt to reverse path directions
 
 Examples:
-
-  svgsort input.svg out.svg     Process input.svg and write to out.svg
-  -h                            Show this screen.
-  --version                     Show version.
+  svgsort input.svg out.svg
+  svgsort input.svg out.svg --reverse
 """
 
 

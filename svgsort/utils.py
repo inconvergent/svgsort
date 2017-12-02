@@ -11,12 +11,8 @@ def ct(c):
   return (c.real, c.imag)
 
 
-def spatial_sort(paths, init_rad=0.01):
-
+def build_pos_index(paths):
   num = len(paths)
-  flip = []
-  unsorted = set(range(2*num))
-
   xs = zeros((2*num, 2), 'float')
   x_path = zeros(2*num, 'int')
 
@@ -27,14 +23,21 @@ def spatial_sort(paths, init_rad=0.01):
     x_path[num+i] = i
 
   tree = kdt(xs)
+  unsorted = set(range(2*num))
+  return tree, xs, x_path, unsorted
 
-  count = 0
+
+def spatial_sort(paths, init_rad=0.01):
+
+  tree, xs, x_path, unsorted = build_pos_index(paths)
+
+  num = len(paths)
+
   pos = array([0, 0], 'float')
-
+  flip = []
   order = []
-
+  count = 0
   while count < num:
-
     rad = init_rad
     while True:
       near = tree.query_ball_point(pos, rad)
@@ -49,14 +52,13 @@ def spatial_sort(paths, init_rad=0.01):
       break
 
     path_ind = x_path[uns]
-    path = paths[path_ind]
+    # path = paths[path_ind]
 
     if uns >= num:
       flip.append(True)
       pos = paths[path_ind][0, :]
       unsorted.remove(uns)
       unsorted.remove(uns-num)
-
     else:
       flip.append(False)
       pos = paths[path_ind][-1, :]

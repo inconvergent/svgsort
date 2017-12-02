@@ -26,7 +26,7 @@ class Svgsort():
 
     self.initial_length = get_length(paths)
     if verbose:
-      print('initial length: {:0.1f}'.format(self.initial_length))
+      print('initial length: {:0.2f}'.format(self.initial_length))
 
     return self
 
@@ -35,15 +35,15 @@ class Svgsort():
     return self
 
   def sort(self, reverse=False, verbose=False):
-
     order, flip = get_sort_order(self.paths, reverse)
     self.paths = list(reorder(self.paths, order, flip=flip))
     self.attributes = list(reorder(self.attributes, order))
 
     if verbose:
       length = get_length(self.paths)
-      print('sorted length: {:0.1f}'.format(length))
-      print('improvement: {:0.1f}'.format(length/self.initial_length))
+      print('sorted length: {:0.2f}'.format(length))
+      df = self.initial_length-length
+      print('estimated improvement: {:0.2f}'.format(df/self.initial_length))
 
     return self
 
