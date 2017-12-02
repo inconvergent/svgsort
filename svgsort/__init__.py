@@ -4,14 +4,17 @@
 """svgsort
 
 Usage:
-  svgsort <in> <out>
+  svgsort <in> <out> [--reverse]
   svgsort -h
+
+Options:
+  --reverse                     Attempt to reverse path directions
 
 Examples:
 
   svgsort input.svg out.svg     Process input.svg and write to out.svg
-  -h                       Show this screen.
-  --version                Show version.
+  -h                            Show this screen.
+  --version                     Show version.
 """
 
 
@@ -34,12 +37,10 @@ def run():
 
 def main(args):
 
-
   try:
-
     _in = args['<in>']
     out = args['<out>']
-    Svgsort().load(_in).sort().save(out)
+    Svgsort().load(_in).sort(args['--reverse']).save(out)
     print('wrote: ', out)
 
   except Exception:
