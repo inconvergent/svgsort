@@ -71,14 +71,17 @@ def spatial_sort(paths, init_rad=0.01):
   return order, flip
 
 
-def reorder(l, order, flip=None):
-  for i in order:
-    if flip:
-      li = l[i]
+def flip_reorder(l, order, flip):
+  for i, f in zip(order, flip):
+    li = l[i]
+    if f:
       li.reverse()
-      yield li
-    else:
-      yield l[i]
+    yield li
+
+
+def reorder(l, order):
+  for i in order:
+    yield l[i]
 
 
 def get_sort_order(paths, reverse):
@@ -98,7 +101,8 @@ def get_sort_order(paths, reverse):
 
   if reverse:
     return order, flip
-  return order, [False]*len(order)
+
+  return order, None
 
 
 def get_length(paths):

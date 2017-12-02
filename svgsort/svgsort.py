@@ -9,6 +9,7 @@ from svgpathtools import wsvg
 from svgsort.utils import get_sort_order
 from svgsort.utils import get_length
 from svgsort.utils import reorder
+from svgsort.utils import flip_reorder
 
 
 
@@ -35,8 +36,15 @@ class Svgsort():
     return self
 
   def sort(self, reverse=False, verbose=False):
+
+    if reverse:
+        print('WARN: reverse does not really work.')
     order, flip = get_sort_order(self.paths, reverse)
-    self.paths = list(reorder(self.paths, order, flip=flip))
+
+    if reverse:
+      self.paths = list(flip_reorder(self.paths, order, flip))
+    else:
+      self.paths = list(reorder(self.paths, order))
     self.attributes = list(reorder(self.attributes, order))
 
     if verbose:
