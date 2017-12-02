@@ -4,12 +4,12 @@
 """svgsort
 
 Usage:
-  fn <in> <out>
-  fn -h
+  svgsort <in> <out>
+  svgsort -h
 
 Examples:
 
-  fn input.svg out.svg     Process input.svg and write to out.svg
+  svgsort input.svg out.svg     Process input.svg and write to out.svg
   -h                       Show this screen.
   --version                Show version.
 """
@@ -37,10 +37,10 @@ def main(args):
 
   try:
 
-    fn = args['<in>']
-    res = args['<out>']
-    Svgsort().load(fn).sort().save(res)
-    print('wrote: ', res)
+    _in = args['<in>']
+    out = args['<out>']
+    Svgsort().load(_in).sort().save(out)
+    print('wrote: ', out)
 
   except Exception:
     traceback.print_exc(file=sys.stdout)
