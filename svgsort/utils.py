@@ -18,9 +18,9 @@ def build_pos_index(paths):
   xs = zeros((2*num, 2), 'float')
   x_path = zeros(2*num, 'int')
 
-  for i, path in enumerate(paths):
-    xs[i, :] = path[0, :]
-    xs[num+i, :] = path[-1, :]
+  for i, (start, stop, reversable) in enumerate(paths):
+    xs[i, :] = start
+    xs[num+i, :] = stop
     x_path[i] = i
     x_path[num+i] = i
 
@@ -50,22 +50,28 @@ def spatial_sort(paths, init_rad=0.01):
 
       dst = norm(pos - xs[cands, :], axis=1)
       cp = dst.argmin()
-      uns = cands[cp]
+      curr = cands[cp]
       break
 
-    path_ind = x_path[uns]
-    # path = paths[path_ind]
+    path_ind = x_path[curr]
 
-    if uns >= num:
-      flip.append(True)
-      pos = paths[path_ind][0, :]
-      unsorted.remove(uns)
-      unsorted.remove(uns-num)
+    start, stop, reversable = paths[path_ind]
+
+    # this is messy
+    if curr >= num:
+      if reversable:
+        flip.append(True)
+        pos = start
+      else:
+        flip.append(False)
+        pos = stop
+      unsorted.remove(curr)
+      unsorted.remove(curr-num)
     else:
       flip.append(False)
-      pos = paths[path_ind][-1, :]
-      unsorted.remove(uns)
-      unsorted.remove(uns+num)
+      pos = start
+      unsorted.remove(curr)
+      unsorted.remove(curr+num)
 
     order.append(path_ind)
     count += 1
@@ -110,7 +116,11 @@ def get_sort_order(paths, reverse):
     else:
       stop = ct(p.point(0))
 
-    coords.append(array([start, stop]))
+    reversable = True
+    if start == stop:
+      reversable = False
+
+    coords.append([start, stop, reversable])
 
   order, flip = spatial_sort(coords)
 

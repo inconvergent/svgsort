@@ -49,6 +49,7 @@ class Svgsort():
 
     if verbose:
       length = get_length(self.paths)
+      print('number of paths: {:d}'.format(len(self.paths)))
       print('sorted length: {:0.2f}'.format(length))
       df = self.initial_length-length
       print('estimated improvement: {:0.2f}'.format(df/self.initial_length))
