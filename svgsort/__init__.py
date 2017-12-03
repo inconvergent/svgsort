@@ -8,7 +8,8 @@ Usage:
   svgsort -h
 
 Options:
-  --reverse                     Attempt to reverse path directions
+  --reverse   Attempt to reverse path directions (Warning, this is
+  experimental)
 
 Examples:
   svgsort input.svg out.svg

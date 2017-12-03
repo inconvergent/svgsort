@@ -38,7 +38,7 @@ class Svgsort():
   def sort(self, reverse=False, verbose=False):
 
     if reverse:
-        print('WARN: reverse does not really work.')
+      print('WARNING: --reverse is experimental.')
     order, flip = get_sort_order(self.paths, reverse)
 
     if reverse:

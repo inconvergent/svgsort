@@ -28,8 +28,6 @@ Currently the result will probably not have the same scale as the input. I
 might fix this but at the moment I recommend checking and re-scaling the result
 in eg. Inkscape.
 
-DO NOT USE --reverse. It does not work.
-
 
 ## Todo
 

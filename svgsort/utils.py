@@ -6,6 +6,8 @@ from numpy import zeros
 from numpy.linalg import norm
 from scipy.spatial import cKDTree as kdt
 
+from svgpathtools import Path
+
 
 def ct(c):
   return (c.real, c.imag)
@@ -71,11 +73,24 @@ def spatial_sort(paths, init_rad=0.01):
   return order, flip
 
 
+def attempt_reverse(path):
+  try:
+    if path.iscontinuous():
+      rpath = path.reversed()
+      if rpath.iscontinuous():
+        return rpath
+    print('''WARNING: unable to reverse path segment; this might give unintended
+results. try without --reverse.''')
+    return path
+  except Exception:
+    print('ERROR: when reversing path. try without --reverse.')
+
+
 def flip_reorder(l, order, flip):
   for i, f in zip(order, flip):
     li = l[i]
     if f:
-      li.reverse()
+      li = attempt_reverse(li)
     yield li
 
 
