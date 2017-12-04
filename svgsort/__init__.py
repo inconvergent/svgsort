@@ -4,12 +4,15 @@
 """svgsort
 
 Usage:
-  svgsort <in> <out> [--reverse]
+  svgsort <in> <out> [--split|--split-all] [--reverse] [--rnd]
   svgsort -h
 
 Options:
-  --reverse   Attempt to reverse path directions (Warning, this is
-  experimental)
+  --reverse    attempt to reverse path directions
+  --split      split paths into continous sub paths
+  --split-all  split all paths into primitives
+                 (probably not what you want)
+  --rnd        random initial position
 
 Examples:
   svgsort input.svg out.svg
@@ -32,7 +35,7 @@ VERBOSE = True
 def run():
 
   from docopt import docopt
-  args = docopt(__doc__, version='svgsort 0.0.1')
+  args = docopt(__doc__, version='svgsort 0.0.2')
   main(args)
 
 
@@ -42,12 +45,15 @@ def main(args):
     _in = args['<in>']
     out = args['<out>']
     reverse = args['--reverse']
-    if VERBOSE:
-      print('reverse: {:b}'.format(reverse))
 
-    Svgsort().load(_in, verbose=VERBOSE)\
-             .sort(reverse, verbose=VERBOSE)\
-             .save(out)
+    svgs = Svgsort().load(_in, verbose=VERBOSE)
+
+    if args['--split-all']:
+      svgs.eager_split()
+    if args['--split']:
+      svgs.split()
+    svgs.sort(reverse, rnd=args['--rnd'], verbose=VERBOSE).save(out)
+
     print('wrote: ', out)
   except Exception:
     traceback.print_exc(file=sys.stdout)

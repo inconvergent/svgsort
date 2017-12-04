@@ -29,13 +29,13 @@ def build_pos_index(paths):
   return tree, xs, x_path, unsorted
 
 
-def spatial_sort(paths, init_rad=0.01):
+def spatial_sort(paths, init_pos, init_rad=0.01):
 
   tree, xs, x_path, unsorted = build_pos_index(paths)
 
   num = len(paths)
+  pos = init_pos
 
-  pos = array([0, 0], 'float')
   flip = []
   order = []
   count = 0
@@ -105,7 +105,7 @@ def reorder(l, order):
     yield l[i]
 
 
-def get_sort_order(paths, reverse):
+def get_sort_order(paths, reverse, init_pos):
 
   coords = []
 
@@ -122,7 +122,7 @@ def get_sort_order(paths, reverse):
 
     coords.append([start, stop, reversable])
 
-  order, flip = spatial_sort(coords)
+  order, flip = spatial_sort(coords, init_pos=init_pos)
 
   if reverse:
     return order, flip
@@ -132,16 +132,33 @@ def get_sort_order(paths, reverse):
 
 def get_length(paths):
   pos = (0.0, 0.0)
-  tot = 0
-  for p in paths:
+  tot = 0.0
+  pen = 0.0
 
+  for p in get_cont_paths(paths):
     ox, oy = pos
     cx, cy = ct(p.point(0))
-    tot += sqrt(pow(ox-cx, 2.0) + pow(oy-cy, 2.0))
+    tmp = sqrt(pow(ox-cx, 2.0) + pow(oy-cy, 2.0))
+    pen += tmp
+    tot += tmp
 
     tot += p.length()
     pos = ct(p.point(1))
 
-  return tot
+  return tot, pen
 
+
+def split_all(paths):
+  for p in paths:
+    for e in p:
+      yield Path(e)
+
+
+def get_cont_paths(paths):
+  for p in paths:
+    if not p.iscontinuous():
+      for sp in p.continuous_subpaths():
+        yield sp
+    else:
+      yield p
 
