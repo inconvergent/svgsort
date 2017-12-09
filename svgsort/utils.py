@@ -69,7 +69,7 @@ def spatial_sort(paths, init_pos, init_rad=0.01):
       unsorted.remove(curr-num)
     else:
       flip.append(False)
-      pos = start
+      pos = stop
       unsorted.remove(curr)
       unsorted.remove(curr+num)
 
@@ -142,7 +142,10 @@ def get_length(paths):
     pen += tmp
     tot += tmp
 
-    tot += p.length()
+    try:
+      tot += p.length()
+    except ZeroDivisionError:
+      print('WARN: /0 error in get_length. this is probably ok.')
     pos = ct(p.point(1))
 
   return tot, pen
