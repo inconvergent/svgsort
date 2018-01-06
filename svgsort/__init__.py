@@ -4,7 +4,7 @@
 """svgsort
 
 Usage:
-  svgsort <in> <out> [--split|--split-all] [--reverse] [--rnd]
+  svgsort <in> <out> [--split|--split-all] [--reverse] [--rnd] [--repeat]
   svgsort -h
 
 Options:
@@ -13,10 +13,11 @@ Options:
   --split-all  split all paths into primitives
                  (probably not what you want)
   --rnd        random initial position
+  --repeat     repeat every path, and draw it in the opposite direction.
 
 Examples:
   svgsort input.svg out.svg
-  svgsort input.svg out.svg --reverse
+  svgsort input.svg out.svg --split --reverse
 """
 
 
@@ -52,9 +53,16 @@ def main(args):
       svgs.eager_split()
     if args['--split']:
       svgs.split()
-    svgs.sort(reverse, rnd=args['--rnd'], verbose=VERBOSE).save(out)
+
+    res = svgs.sort(reverse, rnd=args['--rnd'], verbose=VERBOSE)
+
+    if args['--repeat']:
+      res.repeat(verbose=VERBOSE)
+
+    res.save(out)
 
     print('wrote: ', out)
+
   except Exception:
     traceback.print_exc(file=sys.stdout)
     exit(1)
