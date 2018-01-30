@@ -127,7 +127,7 @@ class Svgsort():
 
   def repeat(self, verbose=False):
     self.paths.extend([attempt_reverse(deepcopy(p))
-                       for p in self.paths])
+                       for p in reversed(self.paths)])
     if verbose:
       length, pen_length = get_length(self.paths)
       print('adding all primitives in reverse:')
