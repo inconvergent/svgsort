@@ -4,7 +4,7 @@
 """svgsort
 
 Usage:
-  svgsort <in> <out> [--split|--split-all] [--reverse] [--rnd] [--repeat]
+  svgsort <in> <out> [--sw=<s>] [--split|--split-all] [--reverse] [--rnd] [--repeat]
   svgsort -h
 
 Options:
@@ -14,6 +14,7 @@ Options:
                  (probably not what you want)
   --rnd        random initial position
   --repeat     repeat every path, and draw it in the opposite direction.
+  --sw=s       stroke width
 
 Examples:
   svgsort input.svg out.svg
@@ -59,7 +60,7 @@ def main(args):
     if args['--repeat']:
       res.repeat(verbose=VERBOSE)
 
-    res.save(out)
+    res.save(out, sw=args['--sw'])
 
     print('wrote: ', out)
 

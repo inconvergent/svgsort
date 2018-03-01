@@ -86,10 +86,10 @@ class Svgsort():
     print('--number of new paths (primitives): {:d}'.format(len(self.paths)))
     return self
 
-  def save(self, fn):
+  def save(self, fn, sw=None):
     atr = {
         'stroke': self.stroke,
-        'stroke-width': self.stroke_width,
+        'stroke-width': sw if sw is not None else self.stroke_width,
         'fill': 'none'
         }
     wsvg(self.paths, attributes=[atr]*len(self.paths), filename=fn)
