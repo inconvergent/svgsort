@@ -17,7 +17,7 @@ packages = find_packages()
 
 setup(
     name='svgsort',
-    version='0.0.2',
+    version='0.0.3',
     description='svg spatial sort for plotting',
     url='',
     license='MIT License',

@@ -5,8 +5,6 @@ from os.path import sep
 
 from copy import deepcopy
 
-from svgpathtools import Path
-
 from numpy.random import random
 from numpy import array
 
@@ -47,7 +45,7 @@ def get_init_pos(bb, rnd):
 
 
 class Svgsort():
-  def __init__(self):
+  def __init__(self, verbose=False):
     self.cwd = getcwd()
     self.paths = None
     self.attributes = None
@@ -55,17 +53,18 @@ class Svgsort():
 
     self.stroke_width = 1.0
     self.stroke = 'black'
+    self.verbose = verbose
 
     self.bbox = None
 
-  def load(self, fn, verbose=False):
+  def load(self, fn):
     paths, _, vals = svg2paths2(self.cwd + sep + fn)
     self.paths = paths
 
     length, pen_length = get_length(paths)
     self.initial_length = length
     self.bbox = bbox(paths)
-    if verbose:
+    if self.verbose:
       print('initial:')
       print('--number of paths: {:d}'.format(len(paths)))
       print('--total path length: {:0.2f}\n--pen move ratio: {:0.2f}'\
@@ -86,28 +85,19 @@ class Svgsort():
     print('--number of new paths (primitives): {:d}'.format(len(self.paths)))
     return self
 
-  def save(self, fn, sw=None):
-    atr = {
-        'stroke': self.stroke,
-        'stroke-width': sw if sw is not None else self.stroke_width,
-        'fill': 'none'
-        }
-    wsvg(self.paths, attributes=[atr]*len(self.paths), filename=fn)
-    return self
-
-  def sort(self, reverse=False, rnd=False, verbose=False):
-    order, flip = get_sort_order(self.paths, reverse, get_init_pos(self.bbox, rnd))
+  def sort(self, reverse=False, rnd=False):
+    order, flip = get_sort_order(self.paths, reverse,
+                                 get_init_pos(self.bbox, rnd))
 
     if reverse:
       self.paths = list(flip_reorder(self.paths, order, flip))
     else:
       self.paths = list(reorder(self.paths, order))
 
-    if verbose:
+    if self.verbose:
       length, pen_length = get_length(self.paths)
 
       print('sort:')
-
       print('--number of paths: {:d}'.format(len(self.paths)))
       print('--total path length: {:0.2f}\n--pen move ratio: {:0.2f}'\
           .format(length, pen_length/length))
@@ -125,14 +115,24 @@ class Svgsort():
 
     return self
 
-  def repeat(self, verbose=False):
+  def repeat(self):
     self.paths.extend([attempt_reverse(deepcopy(p))
                        for p in reversed(self.paths)])
-    if verbose:
+    if self.verbose:
       length, pen_length = get_length(self.paths)
       print('adding all primitives in reverse:')
       print('--number of paths: {:d}'.format(len(self.paths)))
       print('--total path length: {:0.2f}\n--pen move ratio: {:0.2f}'\
           .format(length, pen_length/length))
+    return self
+
+  def save(self, fn, sw=None):
+    atr = {
+        'stroke': self.stroke,
+        'stroke-width': sw if sw is not None else self.stroke_width,
+        'fill': 'none'
+        }
+    atr = [atr]*len(self.paths)
+    wsvg(self.paths, attributes=atr, filename=fn)
     return self
 

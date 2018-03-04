@@ -4,17 +4,21 @@
 """svgsort
 
 Usage:
-  svgsort <in> <out> [--sw=<s>] [--split|--split-all] [--reverse] [--rnd] [--repeat]
+  svgsort <in> <out> [--sw=<s>] [--split|--split-all] [--reverse]
+                     [--rnd] [--repeat] [-nv]
+  svgsort --center <in> <out> [--nv]
   svgsort -h
 
 Options:
-  --reverse    attempt to reverse path directions
-  --split      split paths into continous sub paths
+  --reverse    attempt to reverse path directions.
+  --split      split paths into continous sub paths.
   --split-all  split all paths into primitives
-                 (probably not what you want)
-  --rnd        random initial position
+                 (probably not what you want).
+  --center     center drawing on the canvas (does not sort).
+  --rnd        random initial position.
   --repeat     repeat every path, and draw it in the opposite direction.
-  --sw=s       stroke width
+  --sw=s       stroke width.
+  --nv         not verbose. it is verbose by default.
 
 Examples:
   svgsort input.svg out.svg
@@ -30,14 +34,11 @@ import traceback
 from svgsort.svgsort import Svgsort
 
 
-VERBOSE = True
-
-
 
 def run():
 
   from docopt import docopt
-  args = docopt(__doc__, version='svgsort 0.0.2')
+  args = docopt(__doc__, version='svgsort 0.0.3')
   main(args)
 
 
@@ -47,18 +48,23 @@ def main(args):
     _in = args['<in>']
     out = args['<out>']
     reverse = args['--reverse']
+    verbose = not args['--nv']
 
-    svgs = Svgsort().load(_in, verbose=VERBOSE)
+    svgs = Svgsort(verbose=verbose).load(_in)
 
     if args['--split-all']:
       svgs.eager_split()
     if args['--split']:
       svgs.split()
 
-    res = svgs.sort(reverse, rnd=args['--rnd'], verbose=VERBOSE)
+    if args['--center']:
+      # this option does not sort
+      res = svgs
+    else:
+      res = svgs.sort(reverse, rnd=args['--rnd'])
 
     if args['--repeat']:
-      res.repeat(verbose=VERBOSE)
+      res.repeat()
 
     res.save(out, sw=args['--sw'])
 
@@ -67,7 +73,6 @@ def main(args):
   except Exception:
     traceback.print_exc(file=sys.stdout)
     exit(1)
-
 
 
 if __name__ == '__main__':

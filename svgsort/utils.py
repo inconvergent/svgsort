@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from math import sqrt
-from numpy import array
 from numpy import zeros
 from numpy.linalg import norm
 from scipy.spatial import cKDTree as kdt
