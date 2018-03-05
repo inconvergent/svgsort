@@ -34,6 +34,15 @@ def bbox(paths):
 
   return xmin, xmax, ymin, ymax
 
+def vbox(paths, bound=0.025):
+  xmin, xmax, ymin, ymax = bbox(paths)
+  width = xmax-xmin
+  height = ymax-ymin
+  boundary = min(width, height) * bound
+  return xmin-boundary, ymin-boundary, \
+         width+2*boundary, height+2*boundary
+
+
 def get_init_pos(bb, rnd):
   xmin, xmax, ymin, ymax = bb
 
@@ -42,6 +51,8 @@ def get_init_pos(bb, rnd):
         xmin + random()*(xmax-xmin),
         ymin + random()*(ymax-ymin)])
   return array([0, 0], 'float')
+
+
 
 
 class Svgsort():
@@ -129,12 +140,17 @@ class Svgsort():
     return self
 
   def save(self, fn, sw=None):
-    atr = {
-        'stroke': self.stroke,
-        'stroke-width': sw if sw is not None else self.stroke_width,
-        'fill': 'none'
-        }
-    atr = [atr]*len(self.paths)
-    wsvg(self.paths, attributes=atr, filename=fn, svg_attributes={'debug': False})
+    wsvg(
+        self.paths,
+        attributes=[{
+            'stroke': self.stroke,
+            'stroke-width': sw if sw is not None else self.stroke_width,
+            'fill': 'none'
+            }]*len(self.paths),
+        filename=fn,
+        svg_attributes={
+            'viewBox': ' '.join([str(s) for s in vbox(self.paths)]),
+            'debug': False
+            })
     return self
 
