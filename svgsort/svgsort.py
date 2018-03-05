@@ -46,16 +46,14 @@ def get_init_pos(bb, rnd):
 
 class Svgsort():
   def __init__(self, verbose=False):
-    self.cwd = getcwd()
-    self.paths = None
     self.attributes = None
-    self.initial_length = -1
-
-    self.stroke_width = 1.0
-    self.stroke = 'black'
-    self.verbose = verbose
-
     self.bbox = None
+    self.cwd = getcwd()
+    self.initial_length = -1
+    self.paths = None
+    self.stroke = 'black'
+    self.stroke_width = 1.0
+    self.verbose = verbose
 
   def load(self, fn):
     paths, _, vals = svg2paths2(self.cwd + sep + fn)
@@ -74,15 +72,19 @@ class Svgsort():
     return self
 
   def split(self):
-    print('splitting paths:')
+    if self.verbose:
+      print('splitting paths:')
     self.paths = list(get_cont_paths(self.paths))
-    print('--number of new paths: {:d}'.format(len(self.paths)))
+    if self.verbose:
+      print('--new number of paths: {:d}'.format(len(self.paths)))
     return self
 
   def eager_split(self):
-    print('splitting into primitives:')
+    if self.verbose:
+      print('splitting into primitives:')
     self.paths = list(split_all(list(get_cont_paths(self.paths))))
-    print('--number of new paths (primitives): {:d}'.format(len(self.paths)))
+    if self.verbose:
+      print('--new number of paths (primitives): {:d}'.format(len(self.paths)))
     return self
 
   def sort(self, reverse=False, rnd=False):
