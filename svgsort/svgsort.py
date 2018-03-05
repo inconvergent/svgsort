@@ -135,6 +135,6 @@ class Svgsort():
         'fill': 'none'
         }
     atr = [atr]*len(self.paths)
-    wsvg(self.paths, attributes=atr, filename=fn)
+    wsvg(self.paths, attributes=atr, filename=fn, svg_attributes={'debug': False})
     return self
 

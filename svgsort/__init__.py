@@ -41,6 +41,12 @@ def run():
   args = docopt(__doc__, version='svgsort 0.0.3')
   main(args)
 
+  # import cProfile
+  # cProfile.runctx('main(args)', globals(), locals(), '/tmp/prof')
+  # import pstats
+  # p = pstats.Stats('/tmp/prof')
+  # p.sort_stats('cumulative').print_stats()
+
 
 def main(args):
 
