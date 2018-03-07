@@ -29,9 +29,7 @@ You can override this using these two options
     svgsort input.svg out.svg --no-reverse
 
 The default behaviour is to fit the result inside the dimensions of an A4 sheet
-of paper. You can override this as well. Use
+of paper. You can override this as well. To see the options, use
 
     svgsort --help
-
-To see more options.
 
