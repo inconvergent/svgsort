@@ -219,7 +219,7 @@ class Svgsort():
 
     atr = {}
     if paper is not None:
-      portrait, vb, size = vbox_paper(self.paths, paper)
+      portrait, vb, size = vbox_paper(self.paths, paper, pad=pad)
       if self.verbose:
         print('centering on paper: {:s}:'.format(paper['name']))
         print('--pad: {:0.5f}'.format(pad))
