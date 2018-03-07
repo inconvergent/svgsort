@@ -8,7 +8,7 @@ from setuptools import find_packages
 dependencies = [
     'docopt',
     'svgwrite',
-    'svgpathtools',
+    'svgpathtools==1.3.3',
     ]
 
 
@@ -17,7 +17,7 @@ packages = find_packages()
 
 setup(
     name='svgsort',
-    version='0.0.3',
+    version='1.0.0',
     description='svg spatial sort for plotting',
     url='',
     license='MIT License',
@@ -30,6 +30,7 @@ setup(
             'svgsort=svgsort:run'
             ]
         },
+    dependency_links=['git+https://github.com/inconvergent/svgpathtools.git@master#egg=svgpathtools-1.3.3'],
     zip_safe=True
     )
 
