@@ -6,10 +6,9 @@ Reasonably efficient greedy path planning for plotting svg files.
 
 ## Install
 
-Install:
+Install locally using:
 
     ./setup.py install --user
-
 
 ## Use
 
@@ -29,11 +28,4 @@ of paper. You can override this.
 For other options, see:
 
     svgsort --help
-
-
-
-
-Currently the result will probably not have the same scale as the input. I
-might fix this but at the moment I recommend checking and re-scaling the result
-in eg. Inkscape.
 
