@@ -4,13 +4,21 @@
 """svgsort
 
 Usage:
-  svgsort <in> <out> [--no-split | --split-all]
-                     [--no-reverse]
-                     [--a4 | --a3 | --c | --dim=<d>]
-                     [--pad=<p>]
-                     [--sw=<s>]
-                     [--rnd] [--repeat]
-                     [--nv]
+  svgsort <in> [<out>] [--no-split | --split-all]
+                       [--no-reverse]
+                       [--a4 | --a3 | --dim=<d>]
+                       [--pad-abs]
+                       [--pad=<p>]
+                       [--sw=<s>]
+                       [--rnd] [--repeat]
+                       [--nv]
+  svgsort <in> [<out>] --no-sort
+                       [--a4 | --a3 | --dim=<d>]
+                       [--pad-abs]
+                       [--pad=<p>]
+                       [--sw=<s>]
+                       [--repeat]
+                       [--nv]
   svgsort -h
 
 Options:
@@ -18,15 +26,17 @@ Options:
                   (by default it will attempt to reverse paths.)
   --no-split    DO NOT split paths into continous sub paths.
                   (by default it will split.)
+  --no-sort    DO NOT sort paths
   --split-all   split all paths into primitives.
                   (probably not what you want.)
-  --c           center canvas on the drawing.
   --a4          center on an A4 paper with some padding (default).
   --a3          center on an A3 paper with some padding.
-  --dim=<d>     center inside these dimensions in mm. eg. d=(100x200).
+  --dim=<d>     center inside these dimensions (millimeters). eg. d=(100x200).
   --rnd         random initial position.
   --repeat      repeat every path, and draw it in the opposite direction.
-  --pad=p       padding. in percent of shortest side [default: 0.01].
+  --pad=p       padding in percentage of shortest side [default: 0.01].
+  --pad-abs     if this flag is used, the padding is an absolute value
+                  in the same units as the initial svg width/height properties.
   --sw=s        stroke width.
   --nv          not verbose. (verbose is default.)
 
@@ -52,21 +62,15 @@ from svgsort.svgsort import make_paper
 def run():
 
   from docopt import docopt
-  args = docopt(__doc__, version='svgsort 1.0.0')
+  args = docopt(__doc__, version='svgsort 1.1.0')
   main(args)
-
-  # import cProfile
-  # cProfile.runctx('main(args)', globals(), locals(), '/tmp/prof')
-  # import pstats
-  # p = pstats.Stats('/tmp/prof')
-  # p.sort_stats('cumulative').print_stats()
 
 
 def main(args):
   # print(args)
   try:
     _in = args['<in>']
-    out = args['<out>']
+    out = args['<out>'] if args['<out>'] else args['<in>']+'-srt'
     reverse = not args['--no-reverse']
     verbose = not args['--nv']
 
@@ -80,21 +84,27 @@ def main(args):
       # default
       svgs.split()
 
-    res = svgs.sort(reverse, rnd=args['--rnd'])
+    if args['--no-sort']:
+      # do not sort
+      res = svgs
+    else:
+      res = svgs.sort(reverse, rnd=args['--rnd'])
 
     if args['--repeat']:
       res.repeat()
 
-    paper = None
-    if args['--dim']:
-      paper = make_paper(tuple([int(d) for d in args['--dim'].split('x')]))
-    elif args['--a3']:
+    # default
+    paper = PAPER['a4']
+    if args['--a3']:
       paper = PAPER['a3']
-    elif not args['--c']:
-      # default
-      paper = PAPER['a4']
+    elif args['--dim']:
+      paper = make_paper(tuple([int(d) for d in args['--dim'].split('x')]))
 
-    res.save(out, paper=paper, pad=float(args['--pad']), sw=args['--sw'])
+    res.save(out,
+             paper=paper,
+             pad=float(args['--pad']),
+             padAbs=bool(args['--pad-abs']),
+             sw=args['--sw'])
 
     print('wrote: ', out)
 

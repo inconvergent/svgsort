@@ -48,21 +48,16 @@ def bbox(paths):
   return xmin, xmax, ymin, ymax
 
 
-def vbox(paths, pad=0.01):
-  xmin, xmax, ymin, ymax = bbox(paths)
-  width = xmax-xmin
-  height = ymax-ymin
-  padding = min(width, height) * pad
-  return xmin-padding, ymin-padding, \
-         width+2*padding, height+2*padding
-
-def get_long_short(paths, pad):
+def get_long_short(paths, pad, padAbs=False):
   xmin, xmax, ymin, ymax = bbox(paths)
   width = xmax-xmin
   height = ymax-ymin
   portrait = width < height
 
-  b = pad*min(width, height)
+  if not padAbs:
+    b = pad*min(width, height)
+  else:
+    b = pad
 
   if portrait:
     return {
@@ -85,9 +80,7 @@ def get_long_short(paths, pad):
       }
 
 
-def vbox_paper(paths, p, pad=0.01):
-  ls = get_long_short(paths, pad)
-
+def vbox_paper(ls, p):
   lsnew = {k:v for k, v in ls.items()}
 
   if ls['r'] < p['r']:
@@ -102,9 +95,6 @@ def vbox_paper(paths, p, pad=0.01):
     lsnew['shortmin'] -= diff*0.5
 
   lsnew['r'] = lsnew['long'] / lsnew['short']
-
-  assert lsnew['long'] >= ls['long'], 'new long side is too short'
-  assert lsnew['short'] >= ls['short'], 'new short side is too short'
 
   # xmin, ymin, width, height
   if ls['longDim'] == 'x':
@@ -145,16 +135,17 @@ class Svgsort():
   def load(self, fn):
     paths, _, vals = svg2paths2(self.cwd + sep + fn)
     self.paths = paths
+    self.vals = vals
 
     length, pen_length = get_length(paths)
     self.initial_length = length
     self.bbox = bbox(paths)
     if self.verbose:
       print('initial:')
-      print('--number of paths: {:d}'.format(len(paths)))
-      print('--total path length: {:0.2f}\n--pen move ratio: {:0.2f}'\
+      print('  number of paths: {:d}'.format(len(paths)))
+      print('  total path length: {:0.2f}\n  pen move ratio: {:0.2f}'\
           .format(length, pen_length/length))
-      print('--bbox', self.bbox)
+      print('  bbox', self.bbox)
 
     return self
 
@@ -163,7 +154,7 @@ class Svgsort():
       print('splitting paths:')
     self.paths = list(get_cont_paths(self.paths))
     if self.verbose:
-      print('--new number of paths: {:d}'.format(len(self.paths)))
+      print('  new number of paths: {:d}'.format(len(self.paths)))
     return self
 
   def eager_split(self):
@@ -171,7 +162,7 @@ class Svgsort():
       print('splitting into primitives:')
     self.paths = list(split_all(list(get_cont_paths(self.paths))))
     if self.verbose:
-      print('--new number of paths (primitives): {:d}'.format(len(self.paths)))
+      print('  new number of paths (primitives): {:d}'.format(len(self.paths)))
     return self
 
   def sort(self, reverse=False, rnd=False):
@@ -187,15 +178,15 @@ class Svgsort():
       length, pen_length = get_length(self.paths)
 
       print('sort:')
-      print('--number of paths: {:d}'.format(len(self.paths)))
-      print('--total path length: {:0.2f}\n--pen move ratio: {:0.2f}'\
+      print('  number of paths: {:d}'.format(len(self.paths)))
+      print('  total path length: {:0.2f}\n  pen move ratio: {:0.2f}'\
           .format(length, pen_length/length))
 
       df = self.initial_length-length
       ratio = df/self.initial_length
 
-      print('--bbox', bbox(self.paths))
-      print('--improvement: {:0.2f}'.format(ratio))
+      print('  bbox', bbox(self.paths))
+      print('  improvement: {:0.2f}'.format(ratio))
 
       if ratio < 0.0:
         print('WARNING: there was negative improvement.')
@@ -210,28 +201,23 @@ class Svgsort():
     if self.verbose:
       length, pen_length = get_length(self.paths)
       print('adding all primitives in reverse:')
-      print('--number of paths: {:d}'.format(len(self.paths)))
-      print('--total path length: {:0.2f}\n--pen move ratio: {:0.2f}'\
+      print('  number of paths: {:d}'.format(len(self.paths)))
+      print('  total path length: {:0.2f}\n  pen move ratio: {:0.2f}'\
           .format(length, pen_length/length))
     return self
 
-  def save(self, fn, paper, pad=None, sw=None):
+  def save(self, fn, paper, pad=None, padAbs=False, sw=None):
 
     atr = {}
-    if paper is not None:
-      portrait, vb, size = vbox_paper(self.paths, paper, pad=pad)
-      if self.verbose:
-        print('centering on paper: {:s}:'.format(paper['name']))
-        print('--pad: {:0.5f}'.format(pad))
-        print('--format: {:s}'.format('portrait' if portrait else 'landscape'))
-        print('--bbox', vb)
-      atr['height'] = size['height']
-      atr['width'] = size['width']
-    else:
-      if self.verbose:
-        print('centering:')
-        print('--pad: {:0.5f}'.format(pad))
-      vb = vbox(self.paths, pad=pad)
+
+    ls = get_long_short(self.paths, pad, padAbs)
+    portrait, vb, size = vbox_paper(ls, paper)
+    if self.verbose:
+      print('centering on paper: {:s}:'.format(paper['name']))
+      print('  pad: {:0.5f} ({:s})'.format(pad, 'abs' if padAbs else 'rel'))
+      print('  format: {:s}'.format('portrait' if portrait else 'landscape'))
+    atr['height'] = size['height']
+    atr['width'] = size['width']
 
     atr['viewBox'] = ' '.join([str(s) for s in vb])
 
