@@ -28,12 +28,12 @@ You can disable splitting and reversing using these two options
     svgsort input.svg out.svg --no-split
     svgsort input.svg out.svg --no-reverse
 
-The default behaviour is to fit the result inside the dimensions of an A4 sheet
+The default behaviour is to fit the result inside the dimensions of an A3 sheet
 of paper. It will automatically rotate the paper orientation for the best possible fit.
 You can override the paper size this as well. Eg. by doing
 
+    svgsort input.svg out.svg --a4
     svgsort input.svg out.svg --dim=30x40
-    svgsort input.svg out.svg --a3
 
 
 To see other options, use

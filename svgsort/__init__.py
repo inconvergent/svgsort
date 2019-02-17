@@ -29,8 +29,8 @@ Options:
   --no-sort    DO NOT sort paths
   --split-all   split all paths into primitives.
                   (probably not what you want.)
-  --a4          center on an A4 paper with some padding (default).
-  --a3          center on an A3 paper with some padding.
+  --a4          center on an A4 paper with some padding.
+  --a3          center on an A3 paper with some padding (default).
   --dim=<d>     center inside these dimensions (millimeters). eg. d=(100x200).
   --rnd         random initial position.
   --repeat      repeat every path, and draw it in the opposite direction.
@@ -62,7 +62,7 @@ from svgsort.svgsort import make_paper
 def run():
 
   from docopt import docopt
-  args = docopt(__doc__, version='svgsort 1.1.0')
+  args = docopt(__doc__, version='svgsort 1.1.1')
   main(args)
 
 
@@ -94,9 +94,9 @@ def main(args):
       res.repeat()
 
     # default
-    paper = PAPER['a4']
-    if args['--a3']:
-      paper = PAPER['a3']
+    paper = PAPER['a3']
+    if args['--a4']:
+      paper = PAPER['a4']
     elif args['--dim']:
       paper = make_paper(tuple([int(d) for d in args['--dim'].split('x')]))
 
