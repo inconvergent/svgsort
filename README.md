@@ -40,11 +40,22 @@ To see other options, use
 
     svgsort --help
 
+## Credits
 
-## CONTRIBUTING
+The code in `svgsort/svgpaththools` is from
+https://github.com/mathandy/svgpathtools. With only minor changes by me. I had
+a number of strange issues when installing it via `pip`, so I decided to
+include it here. See the LICENSE file.
 
-This code is a tool that I have written for my own use. I release it publicly
-in case people find it useful. It is not however intended as a
-collaboration/Open Source project. As such I am unlikely to accept PRs, reply
-to issues, or take requests.
+
+## Todo
+
+Strip out larger parts of svgpathtools, and refactor?
+
+
+## Contributing
+
+This code is a tool for my own use. I release it publicly in case people find
+it useful. It is not however intended as a collaboration/Open Source project.
+As such I am unlikely to accept PRs, reply to issues, or take requests.
 

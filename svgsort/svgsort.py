@@ -8,8 +8,8 @@ from copy import deepcopy
 from numpy.random import random
 from numpy import array
 
-from svgpathtools import svg2paths2
-from svgpathtools import wsvg
+from svgsort.svgpathtools import svg2paths
+from svgsort.svgpathtools import disvg
 
 from svgsort.utils import attempt_reverse
 from svgsort.utils import flip_reorder
@@ -133,9 +133,9 @@ class Svgsort():
     self.verbose = verbose
 
   def load(self, fn):
-    paths, _, vals = svg2paths2(self.cwd + sep + fn)
+    # TODO: handle non-center option
+    paths, _, vals = svg2paths(self.cwd + sep + fn, return_svg_attributes=True)
     self.paths = paths
-    self.vals = vals
 
     length, pen_length = get_length(paths)
     self.initial_length = length
@@ -189,7 +189,7 @@ class Svgsort():
       print('  improvement: {:0.2f}'.format(ratio))
 
       if ratio < 0.0:
-        print('WARNING: there was negative improvement.')
+        print('WARNING: the result is less efficient than the original.')
       elif ratio < 0.05:
         print('WARNING: there was very little improvement.')
 
@@ -216,19 +216,18 @@ class Svgsort():
       print('centering on paper: {:s}:'.format(paper['name']))
       print('  pad: {:0.5f} ({:s})'.format(pad, 'abs' if padAbs else 'rel'))
       print('  format: {:s}'.format('portrait' if portrait else 'landscape'))
-    atr['height'] = size['height']
-    atr['width'] = size['width']
 
     atr['viewBox'] = ' '.join([str(s) for s in vb])
 
-    wsvg(
-        self.paths,
-        attributes=[{
-            'stroke': self.stroke,
-            'stroke-width': sw if sw is not None else self.stroke_width,
-            'fill': 'none'
-            }]*len(self.paths),
-        filename=fn,
-        svg_attributes=atr)
+    # TODO: handle non-center option
+    disvg(self.paths,
+          filename=fn,
+          attributes=[{
+              'stroke': self.stroke,
+              'stroke-width': sw if sw is not None else self.stroke_width,
+              'fill': 'none'
+              }]*len(self.paths),
+          dimensions=(size['width'], size['height']),
+          svg_attributes=atr)
     return self
 
