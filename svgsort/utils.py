@@ -5,7 +5,7 @@ from numpy import zeros
 from numpy.linalg import norm
 from scipy.spatial import cKDTree as kdt
 
-from svgpathtools import Path
+from svgsort.svgpathtools import Path
 
 
 def ct(c):
@@ -29,7 +29,6 @@ def build_pos_index(paths):
 
 
 def spatial_sort(paths, init_pos, init_rad=0.01):
-
   tree, xs, x_path, unsorted = build_pos_index(paths)
 
   num = len(paths)
@@ -105,9 +104,7 @@ def reorder(l, order):
 
 
 def get_sort_order(paths, reverse, init_pos):
-
   coords = []
-
   for p in paths:
     start = ct(p.point(0))
     if reverse:

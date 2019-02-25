@@ -12,14 +12,12 @@ Usage:
                        [--sw=<s>]
                        [--rnd] [--repeat]
                        [--nv]
-  svgsort <in> [<out>] --no-sort
-                       [--a4 | --a3 | --dim=<d>]
-                       [--pad-abs]
-                       [--pad=<p>]
-                       [--sw=<s>]
-                       [--repeat]
-                       [--nv]
-  svgsort -h
+  svgsort <in> [<out>] --no-sort [--a4 | --a3 | --dim=<d>]
+                                 [--pad-abs]
+                                 [--pad=<p>]
+                                 [--sw=<s>]
+                                 [--repeat]
+                                 [--nv]
 
 Options:
   --no-reverse  DO NOT attempt to reverse path directions.
@@ -40,10 +38,14 @@ Options:
   --sw=s        stroke width.
   --nv          not verbose. (verbose is default.)
 
+  -h --help   show this screen.
+  --version   show version.
+
 Examples:
+  svgsort input.svg
   svgsort input.svg out.svg
   svgsort input.svg out.svg --dim=30x40
-  svgsort input.svg out.svg --a3
+  svgsort input.svg out.svg --a4
   svgsort input.svg out.svg --repeat
 """
 
@@ -53,21 +55,16 @@ __ALL__ = ['Svgsort']
 import sys
 import traceback
 
+from docopt import docopt
+
 from svgsort.svgsort import Svgsort
 from svgsort.svgsort import PAPER
 from svgsort.svgsort import make_paper
 
 
 
-def run():
-
-  from docopt import docopt
-  args = docopt(__doc__, version='svgsort 1.1.1')
-  main(args)
-
-
-def main(args):
-  # print(args)
+def main():
+  args = docopt(__doc__, version='svgsort 2.0.0')
   try:
     _in = args['<in>']
     out = args['<out>'] if args['<out>'] else args['<in>']+'-srt'
@@ -114,5 +111,5 @@ def main(args):
 
 
 if __name__ == '__main__':
-  run()
+  main()
 
