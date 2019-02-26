@@ -5,38 +5,46 @@
 
 Usage:
   svgsort <in> [<out>] [--no-split | --split-all]
-                       [--no-reverse]
-                       [--a4 | --a3 | --dim=<d>]
+                       [--dim=<d>]
                        [--pad-abs]
                        [--pad=<p>]
+                       [--pen-moves]
                        [--sw=<s>]
                        [--rnd] [--repeat]
-                       [--nv]
-  svgsort <in> [<out>] --no-sort [--a4 | --a3 | --dim=<d>]
+  svgsort <in> [<out>] --no-adjust [--no-split | --split-all]
+                                   [--pen-moves]
+                                   [--sw=<s>]
+                                   [--rnd] [--repeat]
+  svgsort <in> [<out>] --no-sort [--dim=<d>]
                                  [--pad-abs]
                                  [--pad=<p>]
+                                 [--pen-moves]
                                  [--sw=<s>]
-                                 [--repeat]
-                                 [--nv]
+                                 [--rnd] [--repeat]
 
 Options:
-  --no-reverse  DO NOT attempt to reverse path directions.
-                  (by default it will attempt to reverse paths.)
-  --no-split    DO NOT split paths into continous sub paths.
-                  (by default it will split.)
-  --no-sort    DO NOT sort paths
-  --split-all   split all paths into primitives.
-                  (probably not what you want.)
-  --a4          center on an A4 paper with some padding.
-  --a3          center on an A3 paper with some padding (default).
-  --dim=<d>     center inside these dimensions (millimeters). eg. d=(100x200).
-  --rnd         random initial position.
-  --repeat      repeat every path, and draw it in the opposite direction.
-  --pad=p       padding in percentage of shortest side [default: 0.01].
+  --no-split    do not split paths into continous sub paths.
+                (by default it will split.)
+
+  --no-adjust   do not change paper layout. experimental.
+  --no-sort     do not sort paths.
+
+  --pen-moves   draw pen moves in red. to see sort result.
+
+  --dim=<d>     paper size. use A4, A3 (default), or eg. 100x200.
+                in the latter case the unit is in millmeters [default: A3].
+
+  --pad=<p>     padding in percentage of shortest side [default: 0.01].
   --pad-abs     if this flag is used, the padding is an absolute value
-                  in the same units as the initial svg width/height properties.
-  --sw=s        stroke width.
-  --nv          not verbose. (verbose is default.)
+                in the same units as the initial svg width/height properties.
+
+  --repeat      repeat every path, and draw it in the opposite direction.
+
+  --sw=<s>      stroke width [default: 1.0].
+
+  --split-all   split all paths into primitives. (probably not what you want.)
+
+  --rnd         random initial position.
 
   -h --help   show this screen.
   --version   show version.
@@ -45,7 +53,7 @@ Examples:
   svgsort input.svg
   svgsort input.svg out.svg
   svgsort input.svg out.svg --dim=30x40
-  svgsort input.svg out.svg --a4
+  svgsort input.svg out.svg --dim=A4
   svgsort input.svg out.svg --repeat
 """
 
@@ -57,21 +65,21 @@ import traceback
 
 from docopt import docopt
 
-from svgsort.svgsort import Svgsort
-from svgsort.svgsort import PAPER
-from svgsort.svgsort import make_paper
+from .svgsort import Svgsort
+from .paper_utils import PAPER
+from .paper_utils import make_paper
 
 
 
 def main():
-  args = docopt(__doc__, version='svgsort 2.0.0')
+  args = docopt(__doc__, version='svgsort 3.0.0')
   try:
     _in = args['<in>']
     out = args['<out>'] if args['<out>'] else args['<in>']+'-srt'
-    reverse = not args['--no-reverse']
-    verbose = not args['--nv']
+    adjust = not args['--no-adjust']
+    penmoves = args['--pen-moves']
 
-    svgs = Svgsort(verbose=verbose).load(_in)
+    svgs = Svgsort(sw=args['--sw']).load(_in)
 
     if args['--no-split']:
       pass
@@ -83,27 +91,29 @@ def main():
 
     if args['--no-sort']:
       # do not sort
-      res = svgs
+      pass
     else:
-      res = svgs.sort(reverse, rnd=args['--rnd'])
+      svgs.sort(rnd=args['--rnd'])
 
     if args['--repeat']:
-      res.repeat()
+      svgs.repeat()
 
-    # default
-    paper = PAPER['a3']
-    if args['--a4']:
-      paper = PAPER['a4']
-    elif args['--dim']:
-      paper = make_paper(tuple([int(d) for d in args['--dim'].split('x')]))
+    if penmoves:
+      svgs.make_pen_move_paths()
 
-    res.save(out,
-             paper=paper,
-             pad=float(args['--pad']),
-             padAbs=bool(args['--pad-abs']),
-             sw=args['--sw'])
+    dim = args['--dim'].strip().lower()
+    paper = PAPER.get(dim, None)
+    if paper is None:
+      try:
+        paper = make_paper(tuple([int(d) for d in args['--dim'].split('x')]))
+      except Exception:
+        raise ValueError('wrong dim/paper size')
 
-    print('wrote: ', out)
+    if adjust:
+      svgs.save(out, paper=paper, pad=float(args['--pad']),
+                padAbs=bool(args['--pad-abs']))
+    else:
+      svgs.save_no_adjust(out)
 
   except Exception:
     traceback.print_exc(file=sys.stdout)

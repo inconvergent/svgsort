@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg baseProfile="full" height="420mm" version="1.1" viewBox="27.210505299999998 12.495017742424253 154.59983939999998 218.6260355151515" width="297mm" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs/>
+  <path d="M 28.72619,92.892856 L 115.66072,205.52976" fill="none" stroke="black" stroke-width="1.0"/>
+  <path d="M 134.9375,197.59226 L 48.002975,84.955364" fill="none" stroke="black" stroke-width="1.0"/>
+  <path d="M 65.389881,72.860121 L 152.32441,185.49702" fill="none" stroke="black" stroke-width="1.0"/>
+  <path d="M 173.49108,171.88988 L 86.556545,59.252978" fill="none" stroke="black" stroke-width="1.0"/>
+  <path d="M 93.360113,38.086311 L 180.29466,150.72321" fill="none" stroke="black" stroke-width="1.0"/>
+  <path d="M 115.66072,205.52976 L 134.9375,197.59226" fill="none" stroke="red" stroke-width="1.0"/>
+  <path d="M 48.002975,84.955364 L 65.389881,72.860121" fill="none" stroke="red" stroke-width="1.0"/>
+  <path d="M 152.32441,185.49702 L 173.49108,171.88988" fill="none" stroke="red" stroke-width="1.0"/>
+  <path d="M 86.556545,59.252978 L 93.360113,38.086311" fill="none" stroke="red" stroke-width="1.0"/>
+</svg>

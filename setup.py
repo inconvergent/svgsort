@@ -6,7 +6,7 @@ from setuptools import find_packages
 
 
 setup(name='svgsort',
-      version='2.0.0',
+      version='3.0.0',
       description='svg spatial sort for plotting',
       url='https://github.com/inconvergent/svgsort',
       license='MIT License',

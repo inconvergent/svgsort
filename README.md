@@ -1,44 +1,38 @@
 # Svg Spatial Sort
 
 
-Reasonably efficient greedy path planning for plotting svg files.
+Reasonably efficient, greedy, path planning for plotting svg files.
 
 
 ## Install
 
 Install locally using:
 
-    ./setup.py install --user
+    ./setup.py [install | develop] --user
+
 
 ## Use
 
-Use it like this:
+Use from the terminal like this:
 
     svgsort input.svg out.svg
 
-This will break down paths into continous sub paths. it will also allow
-travelling along paths in both directions (but only once).
+This will break down paths into continous sub paths before sorting. it will
+also allow travelling along paths (once) in both directions.
+
+The default behaviour is to fit the result into an A3 sheet of paper. It will
+automatically rotate the paper orientation for the best possible fit, as well
+as align the drawing to the center. You can override the paper size by using
+`--dim=A4` or, eg., `--dim=30x40`. To disable centering entirely use
+`--no-adjust`.
 
 To ensure every path is drawn twice (once in each direction), you can use
+`--repeat`
 
-    svgsort input.svg out.svg --repeat
-
-You can disable splitting and reversing using these two options
-
-    svgsort input.svg out.svg --no-split
-    svgsort input.svg out.svg --no-reverse
-
-The default behaviour is to fit the result inside the dimensions of an A3 sheet
-of paper. It will automatically rotate the paper orientation for the best possible fit.
-You can override the paper size this as well. Eg. by doing
-
-    svgsort input.svg out.svg --a4
-    svgsort input.svg out.svg --dim=30x40
-
-
-To see other options, use
+You can disable splitting with `--no-split`. To see other options:
 
     svgsort --help
+
 
 ## Credits
 

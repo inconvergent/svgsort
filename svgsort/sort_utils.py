@@ -5,7 +5,8 @@ from numpy import zeros
 from numpy.linalg import norm
 from scipy.spatial import cKDTree as kdt
 
-from svgsort.svgpathtools import Path
+from .svgpathtools.path import Line
+from .svgpathtools import Path
 
 
 def ct(c):
@@ -17,7 +18,7 @@ def build_pos_index(paths):
   xs = zeros((2*num, 2), 'float')
   x_path = zeros(2*num, 'int')
 
-  for i, (start, stop, reversable) in enumerate(paths):
+  for i, (start, stop) in enumerate(paths):
     xs[i, :] = start
     xs[num+i, :] = stop
     x_path[i] = i
@@ -52,17 +53,11 @@ def spatial_sort(paths, init_pos, init_rad=0.01):
       break
 
     path_ind = x_path[curr]
+    start, stop = paths[path_ind]
 
-    start, stop, reversable = paths[path_ind]
-
-    # this is messy
     if curr >= num:
-      if reversable:
-        flip.append(True)
-        pos = start
-      else:
-        flip.append(False)
-        pos = stop
+      flip.append(True)
+      pos = start
       unsorted.remove(curr)
       unsorted.remove(curr-num)
     else:
@@ -98,32 +93,19 @@ def flip_reorder(l, order, flip):
     yield li
 
 
-def reorder(l, order):
-  for i in order:
-    yield l[i]
+def pen_moves(paths):
+  if paths:
+    curr = paths[0]
+    for p in paths[1:]:
+      yield Line(curr.end, p.start)
+      curr = p
 
 
-def get_sort_order(paths, reverse, init_pos):
+def get_sort_order(paths, init_pos):
   coords = []
   for p in paths:
-    start = ct(p.point(0))
-    if reverse:
-      stop = ct(p.point(1))
-    else:
-      stop = ct(p.point(0))
-
-    reversable = True
-    if start == stop:
-      reversable = False
-
-    coords.append([start, stop, reversable])
-
-  order, flip = spatial_sort(coords, init_pos=init_pos)
-
-  if reverse:
-    return order, flip
-
-  return order, None
+    coords.append([ct(p.point(0)), ct(p.point(1))])
+  return spatial_sort(coords, init_pos=init_pos)
 
 
 def get_length(paths):
